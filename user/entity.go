@@ -3,7 +3,9 @@ package user
 import (
 	"time"
 
+	"github.com/clerijr/teste-picpay-go/user/dto"
 	"github.com/google/uuid"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type User struct {
@@ -17,15 +19,22 @@ type User struct {
 	CreatedAt time.Time
 }
 
-func NewUser(name, lastname, uType, document, email, password string) *User {
-	return &User{
+func NewUser(dto dto.NewUser) (*User, error) {
+	hash, err := bcrypt.GenerateFromPassword([]byte(dto.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return nil, err
+	}
+
+	user := User{
 		ID:        uuid.New(),
-		Name:      name,
-		Lastname:  lastname,
-		UType:     uType,
-		Document:  document,
-		Email:     email,
-		Password:  password,
+		Name:      dto.Name,
+		Lastname:  dto.Lastname,
+		UType:     dto.UType,
+		Document:  dto.Document,
+		Email:     dto.Email,
+		Password:  string(hash),
 		CreatedAt: time.Now(),
 	}
+
+	return &user, nil
 }
