@@ -13,6 +13,6 @@ func Initialize(connStr string) (*sql.DB, error) {
 		panic(err)
 	}
 
-	fmt.Println("Successfully connected to the database!")
+	fmt.Println("Connected to PostgreSQL!")
 	return db, nil
 }
