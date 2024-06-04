@@ -1,10 +1,10 @@
 package dto
 
 type NewUser struct {
-	Name     string
-	Lastname string
-	UType    string
-	Document string
-	Email    string
-	Password string
+	Name     string `json:"name"`
+	Lastname string `json:"lastname"`
+	UType    string `json:"type"`
+	Document string `json:"document"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }

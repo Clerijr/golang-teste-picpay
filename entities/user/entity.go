@@ -9,14 +9,14 @@ import (
 )
 
 type User struct {
-	ID        uuid.UUID
-	Name      string
-	Lastname  string
-	UType     string
-	Document  string
-	Email     string
-	Password  string
-	CreatedAt time.Time
+	ID        uuid.UUID `db:"id"`
+	Name      string    `db:"name"`
+	Lastname  string    `db:"lastname"`
+	UType     string    `db:"type"`
+	Document  string    `db:"document"`
+	Email     string    `db:"email"`
+	Password  string    `db:"password"`
+	CreatedAt time.Time `db:"created_at"`
 }
 
 func NewUser(dto dto.NewUser) (*User, error) {

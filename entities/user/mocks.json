@@ -1,0 +1,8 @@
+{
+  "name": "John",
+  "lastname": "Doe",
+  "type": "fisica",
+  "document": "12312312323",
+  "email": "john@doe.com",
+  "password": "123123"
+}
