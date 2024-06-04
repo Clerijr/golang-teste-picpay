@@ -13,6 +13,7 @@ func NewController() *Controller {
 }
 
 func (c *Controller) Create(w http.ResponseWriter, r *http.Request) {
+
 	fmt.Printf("funfo")
 	w.WriteHeader(http.StatusCreated)
 }

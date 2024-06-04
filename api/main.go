@@ -7,7 +7,7 @@ import (
 
 	"github.com/clerijr/teste-picpay-go/api/routes"
 	"github.com/clerijr/teste-picpay-go/db"
-	"github.com/clerijr/teste-picpay-go/user"
+	"github.com/clerijr/teste-picpay-go/entities/user"
 	"github.com/joho/godotenv"
 )
 

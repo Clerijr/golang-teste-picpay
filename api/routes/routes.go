@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"github.com/clerijr/teste-picpay-go/user"
+	"github.com/clerijr/teste-picpay-go/entities/user"
 	"github.com/go-chi/chi"
 )
 
