@@ -17,10 +17,14 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	pgConString := os.Getenv("POSTGRE_URL")
-	db.Initialize(pgConString)
+	pgConString := os.Getenv("POSTGRES_URL")
+	sqlDb, err := db.Initialize(pgConString)
+	if err != nil {
+		log.Print("Error saving user")
+	}
 
-	userController := user.NewController()
+	userRepository := user.NewRepository(sqlDb)
+	userController := user.NewController(userRepository)
 
 	controllers := routes.Controllers{
 		User: userController,
