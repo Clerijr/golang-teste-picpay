@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  db:
+    container_name: picpay_simples_db
+    image: postgres:16-alpine3.20
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: 123123
+      POSTGRES_DB: picpay_simples
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
