@@ -1,0 +1,4 @@
+ALTER TABLE users 
+DROP COLUMN token VARCHAR(255),
+DROP COLUMN refresh_token VARCHAR(255);
+
