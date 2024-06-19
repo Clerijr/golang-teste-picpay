@@ -11,12 +11,17 @@ type Controllers struct {
 
 func InitRoutes(controllers Controllers) *chi.Mux {
 	c := chi.NewRouter()
+	c.Get("/", controllers.User.Pong)
 
-	c.Route("/api", func(r chi.Router) {
-		r.Route("/users", func(r chi.Router) {
-			r.Post("/", controllers.User.Create)
-			r.Post("/login", controllers.User.Login)
-		})
+	c.Group(func(r chi.Router) {
+		r.Post("/", controllers.User.Create)
+		r.Post("/login", controllers.User.Login)
+	})
+
+	c.Group(func(r chi.Router) {
+		/* r.Use(jwtauth.Verifier(tknAuth))
+		r.Use(jwtauth.Authenticator) */
+		r.Get("/user/:id", controllers.User.GetByID)
 	})
 
 	return c

@@ -6,8 +6,8 @@ import (
 	"os"
 
 	"github.com/clerijr/teste-picpay-go/api/routes"
-	"github.com/clerijr/teste-picpay-go/db"
 	"github.com/clerijr/teste-picpay-go/entities/user"
+	"github.com/clerijr/teste-picpay-go/infra/db"
 	"github.com/joho/godotenv"
 )
 
@@ -17,8 +17,7 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	pgConString := os.Getenv("POSTGRES_URL")
-	sqlDb, err := db.Initialize(pgConString)
+	sqlDb, err := db.Connect()
 	if err != nil {
 		log.Print("Error saving user")
 	}
