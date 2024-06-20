@@ -15,20 +15,20 @@ type UserAuthToken struct {
 }
 
 type AuthEncoder struct {
-	secret string
+	secret    string
+	TokenAuth *jwtauth.JWTAuth
 }
 
 func NewAuthEncoder() *AuthEncoder {
 	return &AuthEncoder{
-		secret: os.Getenv("SECRET"),
+		secret:    os.Getenv("SECRET"),
+		TokenAuth: jwtauth.New("HS256", []byte(os.Getenv("SECRET")), nil),
 	}
 }
 
 func (a *AuthEncoder) GenerateToken(user *dto.UserAuth) (*UserAuthToken, error) {
 
-	tokenAuth := jwtauth.New("HS256", []byte(os.Getenv("SECRET")), nil)
-
-	_, token, _ := tokenAuth.Encode(map[string]any{
+	_, token, _ := a.TokenAuth.Encode(map[string]any{
 		"id":       user.ID,
 		"username": user.Name,
 		"email":    user.Email,

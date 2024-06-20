@@ -1,6 +1,7 @@
 package user
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/clerijr/teste-picpay-go/entities/user/dto"
@@ -38,38 +39,39 @@ func (r *Repository) Save(dto *dto.NewUser) error {
 }
 
 func (r *Repository) FindByID(id string) (*User, error) {
-	var user *User
-	queryString := "SELECT u.id, u.name, u.lastname, u.type, u.document, u.email, u.created_at, u.updated_at, u.deleted_at, u.token, u.refresh_token FROM users u WHERE u.id=?"
+	var user User
+	queryString := "SELECT u.id, u.name, u.lastname, u.type, u.document, u.email, u.created_at, u.updated_at, u.deleted_at, u.token, u.refresh_token FROM users u WHERE u.id=$1"
 
 	err := r.db.Get(&user, queryString, id)
 	if err != nil {
-		r.log.Print("Repository: Error finding user by id", err)
+		r.log.Print("Repository: Error finding user by id: ", err)
 		return nil, err
 	}
 
-	return user, nil
+	return &user, nil
 }
 
 func (r *Repository) FindByEmail(email string) (*dto.UserAuth, error) {
-	var user *dto.UserAuth
-	queryString := "SELECT u.id, u.name, u.email, FROM users u WHERE u.email=?"
+	var user dto.UserAuth
+	queryString := "SELECT u.id, u.name, u.email FROM users u WHERE u.email=$1"
 
 	err := r.db.Get(&user, queryString, email)
 	if err != nil {
-		r.log.Print("Repository: Error finding user by email", err)
+		fmt.Println(queryString, "-------", email)
+		r.log.Print("Repository: Error finding user by email: ", err)
 		return nil, err
 	}
 
-	return user, nil
+	return &user, nil
 }
 
 func (r *Repository) GetUserPassword(id uuid.UUID) (string, error) {
 	var pass string
-	queryString := "SELECT u.password FROM users u WHERE u.id=?"
+	queryString := "SELECT u.password FROM users u WHERE u.id=$1"
 
 	err := r.db.Get(&pass, queryString, id)
 	if err != nil {
-		r.log.Print("Repository: Error finding user id", err)
+		r.log.Print("Repository: Error finding user data: ", err)
 		return "", err
 	}
 
