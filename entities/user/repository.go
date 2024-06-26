@@ -1,37 +1,27 @@
 package user
 
 import (
-	"fmt"
-	"log"
-
 	"github.com/clerijr/teste-picpay-go/entities/user/dto"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 )
 
 type Repository struct {
-	db  *sqlx.DB
-	log log.Logger
+	db *sqlx.DB
 }
 
 func NewRepository(db *sqlx.DB) *Repository {
 	return &Repository{
-		db:  db,
-		log: *log.Default(),
+		db: db,
 	}
 }
 
 func (r *Repository) Save(dto *dto.NewUser) error {
 
-	user, err := NewUser(*dto)
-	if err != nil {
-		r.log.Print("Repository: Error parsing user", err)
-		return err
-	}
+	user, _ := NewUser(*dto)
 
-	_, err = r.db.NamedExec("INSERT INTO users (id, name, lastname, type, document, email, password, created_at) values (:id, :name, :lastname, :type, :document, :email, :password, :created_at)", &user)
+	_, err := r.db.NamedExec("INSERT INTO users (id, name, lastname, type, document, email, password, created_at) values (:id, :name, :lastname, :type, :document, :email, :password, :created_at)", &user)
 	if err != nil {
-		r.log.Print("Repository: Error saving user", err)
 		return err
 	}
 
@@ -44,7 +34,6 @@ func (r *Repository) FindByID(id string) (*User, error) {
 
 	err := r.db.Get(&user, queryString, id)
 	if err != nil {
-		r.log.Print("Repository: Error finding user by id: ", err)
 		return nil, err
 	}
 
@@ -57,23 +46,22 @@ func (r *Repository) FindByEmail(email string) (*dto.UserAuth, error) {
 
 	err := r.db.Get(&user, queryString, email)
 	if err != nil {
-		fmt.Println(queryString, "-------", email)
-		r.log.Print("Repository: Error finding user by email: ", err)
 		return nil, err
 	}
 
 	return &user, nil
 }
 
-func (r *Repository) GetUserPassword(id uuid.UUID) (string, error) {
+func (r *Repository) GetUserPassword(id uuid.UUID) (*string, error) {
 	var pass string
+
 	queryString := "SELECT u.password FROM users u WHERE u.id=$1"
 
 	err := r.db.Get(&pass, queryString, id)
 	if err != nil {
-		r.log.Print("Repository: Error finding user data: ", err)
-		return "", err
+		return nil, err
+
 	}
 
-	return pass, nil
+	return &pass, nil
 }

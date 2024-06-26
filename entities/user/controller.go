@@ -3,7 +3,6 @@ package user
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/clerijr/teste-picpay-go/entities/user/dto"
@@ -14,14 +13,12 @@ import (
 
 type Controller struct {
 	repo    *Repository
-	log     *log.Logger
 	encoder *pkg.AuthEncoder
 }
 
 func NewController(repo *Repository) *Controller {
 	return &Controller{
 		repo:    repo,
-		log:     log.Default(),
 		encoder: pkg.NewAuthEncoder(),
 	}
 }
@@ -31,14 +28,14 @@ func (c *Controller) Create(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
-		c.log.Print("Controller: Error decoding body", err)
-		w.WriteHeader(http.StatusInternalServerError)
+		http.Error(w, "Controller: Error decoding body", http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
 	err = c.repo.Save(&user)
 	if err != nil {
-		c.log.Print("Controller: Error saving user", err)
+		http.Error(w, "Controller: Error saving user", http.StatusInternalServerError)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -52,11 +49,13 @@ func (c *Controller) GetByID(w http.ResponseWriter, r *http.Request) {
 	user, err := c.repo.FindByID(userID)
 	if err != nil {
 		http.Error(w, "Controller: Error geting user by id", http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	if err = json.NewEncoder(w).Encode(&user); err != nil {
 		http.Error(w, "Controller: Error encoding user", http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
@@ -66,10 +65,12 @@ func (c *Controller) GetByID(w http.ResponseWriter, r *http.Request) {
 func (c *Controller) Login(w http.ResponseWriter, r *http.Request) {
 	var loginData *dto.LoginUser
 	var user *dto.UserAuth
-	var pass string
+	var pass *string
+
 	err := json.NewDecoder(r.Body).Decode(&loginData)
 	if err != nil {
-		http.Error(w, "Controller: Error decoding user", http.StatusInternalServerError)
+		http.Error(w, "Controller: Error decoding user data", http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
@@ -85,8 +86,8 @@ func (c *Controller) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err = bcrypt.CompareHashAndPassword([]byte(pass), []byte(loginData.Password)); err != nil {
-		http.Error(w, "Controller: Invalid Credentials", http.StatusInternalServerError)
+	if err = bcrypt.CompareHashAndPassword([]byte(*pass), []byte(loginData.Password)); err != nil {
+		http.Error(w, "Controller: Invalid Credentials", http.StatusUnauthorized)
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
@@ -94,6 +95,7 @@ func (c *Controller) Login(w http.ResponseWriter, r *http.Request) {
 	tokenString, err := c.encoder.GenerateToken(user)
 	if err != nil {
 		http.Error(w, "Controller: Error generating token", http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 

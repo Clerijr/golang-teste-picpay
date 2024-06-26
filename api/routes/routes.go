@@ -26,8 +26,7 @@ func InitRoutes(controllers Controllers) *chi.Mux {
 
 		r.Use(jwtauth.Verifier(tknAuth))
 		r.Use(jwtauth.Authenticator)
-
-		r.Get("/user/:id", controllers.User.GetByID)
+		r.Get("/user/{id}", controllers.User.GetByID)
 	})
 
 	return c
