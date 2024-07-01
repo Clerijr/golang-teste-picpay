@@ -15,18 +15,20 @@ func InitRoutes(controllers Controllers) *chi.Mux {
 	c := chi.NewRouter()
 	tknAuth := pkg.NewAuthEncoder().TokenAuth
 
-	c.Get("/", controllers.User.Pong)
+	c.Route("/api", func(r chi.Router) {
 
-	c.Group(func(r chi.Router) {
-		r.Post("/", controllers.User.Create)
-		r.Post("/login", controllers.User.Login)
-	})
+		r.Group(func(public chi.Router) {
+			public.Get("/", controllers.User.Pong)
+			public.Post("/", controllers.User.Create)
+			public.Post("/login", controllers.User.Login)
+		})
 
-	c.Group(func(r chi.Router) {
-		r.Use(jwtauth.Verifier(tknAuth))
-		r.Use(jwtauth.Authenticator)
-		
-		r.Get("/user/{id}", controllers.User.GetByID)
+		r.Group(func(private chi.Router) {
+			private.Use(jwtauth.Verifier(tknAuth))
+			private.Use(jwtauth.Authenticator)
+
+			private.Get("/user/{id}", controllers.User.GetByID)
+		})
 	})
 
 	return c

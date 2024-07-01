@@ -1,24 +1,26 @@
-package user
+package repositories
 
 import (
-	"github.com/clerijr/teste-picpay-go/entities/user/dto"
+	"github.com/clerijr/teste-picpay-go/entities/user"
+	"github.com/clerijr/teste-picpay-go/interfaces"
+	"github.com/clerijr/teste-picpay-go/types"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 )
 
-type Repository struct {
+type SQLRepo struct {
 	db *sqlx.DB
 }
 
-func NewRepository(db *sqlx.DB) *Repository {
-	return &Repository{
+func NewSQLRepo(db *sqlx.DB) interfaces.Repository {
+	return &SQLRepo{
 		db: db,
 	}
 }
 
-func (r *Repository) Save(dto *dto.NewUser) error {
+func (r *SQLRepo) Save(dto *types.NewUser) error {
 
-	user, _ := NewUser(*dto)
+	user, _ := user.NewUser(*dto)
 
 	_, err := r.db.NamedExec("INSERT INTO users (id, name, lastname, type, document, email, password, created_at) values (:id, :name, :lastname, :type, :document, :email, :password, :created_at)", &user)
 	if err != nil {
@@ -28,8 +30,8 @@ func (r *Repository) Save(dto *dto.NewUser) error {
 	return nil
 }
 
-func (r *Repository) FindByID(id string) (*User, error) {
-	var user User
+func (r *SQLRepo) FindByID(id string) (*types.User, error) {
+	var user types.User
 	queryString := "SELECT u.id, u.name, u.lastname, u.type, u.document, u.email, u.created_at, u.updated_at, u.deleted_at, u.token, u.refresh_token FROM users u WHERE u.id=$1"
 
 	err := r.db.Get(&user, queryString, id)
@@ -40,8 +42,8 @@ func (r *Repository) FindByID(id string) (*User, error) {
 	return &user, nil
 }
 
-func (r *Repository) FindByEmail(email string) (*dto.UserAuth, error) {
-	var user dto.UserAuth
+func (r *SQLRepo) FindByEmail(email string) (*types.UserAuth, error) {
+	var user types.UserAuth
 	queryString := "SELECT u.id, u.name, u.email FROM users u WHERE u.email=$1"
 
 	err := r.db.Get(&user, queryString, email)
@@ -52,7 +54,7 @@ func (r *Repository) FindByEmail(email string) (*dto.UserAuth, error) {
 	return &user, nil
 }
 
-func (r *Repository) GetUserPassword(id uuid.UUID) (*string, error) {
+func (r *SQLRepo) GetUserPassword(id uuid.UUID) (*string, error) {
 	var pass string
 
 	queryString := "SELECT u.password FROM users u WHERE u.id=$1"

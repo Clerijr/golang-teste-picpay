@@ -5,18 +5,19 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/clerijr/teste-picpay-go/entities/user/dto"
+	"github.com/clerijr/teste-picpay-go/interfaces"
 	"github.com/clerijr/teste-picpay-go/pkg"
+	"github.com/clerijr/teste-picpay-go/types"
 	"github.com/go-chi/chi"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type Controller struct {
-	repo    *Repository
+	repo    interfaces.Repository
 	encoder *pkg.AuthEncoder
 }
 
-func NewController(repo *Repository) *Controller {
+func NewController(repo interfaces.Repository) *Controller {
 	return &Controller{
 		repo:    repo,
 		encoder: pkg.NewAuthEncoder(),
@@ -24,7 +25,7 @@ func NewController(repo *Repository) *Controller {
 }
 
 func (c *Controller) Create(w http.ResponseWriter, r *http.Request) {
-	var user dto.NewUser
+	var user types.NewUser
 
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
@@ -63,8 +64,8 @@ func (c *Controller) GetByID(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *Controller) Login(w http.ResponseWriter, r *http.Request) {
-	var loginData *dto.LoginUser
-	var user *dto.UserAuth
+	var loginData *types.LoginUser
+	var user *types.UserAuth
 	var pass *string
 
 	err := json.NewDecoder(r.Body).Decode(&loginData)

@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/clerijr/teste-picpay-go/entities/user/dto"
+	"github.com/clerijr/teste-picpay-go/types"
 	"github.com/go-chi/jwtauth"
 	"github.com/golang-jwt/jwt"
 )
@@ -26,10 +26,9 @@ func NewAuthEncoder() *AuthEncoder {
 	}
 }
 
-func (a *AuthEncoder) GenerateToken(user *dto.UserAuth) (*UserAuthToken, error) {
+func (a *AuthEncoder) GenerateToken(user *types.UserAuth) (*UserAuthToken, error) {
 
 	_, token, _ := a.TokenAuth.Encode(map[string]any{
-		"id":       user.ID,
 		"username": user.Name,
 		"email":    user.Email,
 		"exp":      time.Now().Add(time.Second * 60000).Unix(),
@@ -42,9 +41,9 @@ func (a *AuthEncoder) GenerateToken(user *dto.UserAuth) (*UserAuthToken, error) 
 	return &userAuthToken, nil
 }
 
-func (a *AuthEncoder) ParseJWTToken(tkn string) (*dto.UserAuth, error) {
+func (a *AuthEncoder) ParseJWTToken(tkn string) (*types.UserAuth, error) {
 
-	var userClaims dto.UserAuth
+	var userClaims types.UserAuth
 
 	_, err := jwt.ParseWithClaims(tkn, &userClaims, func(token *jwt.Token) (interface{}, error) {
 		return []byte(a.secret), nil
