@@ -1,9 +1,9 @@
 package repositories
 
 import (
+	"github.com/clerijr/teste-picpay-go/entities/types"
 	"github.com/clerijr/teste-picpay-go/entities/user"
 	"github.com/clerijr/teste-picpay-go/interfaces"
-	"github.com/clerijr/teste-picpay-go/types"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 )

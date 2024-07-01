@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/clerijr/teste-picpay-go/entities/types"
 	"github.com/clerijr/teste-picpay-go/interfaces"
 	"github.com/clerijr/teste-picpay-go/pkg"
-	"github.com/clerijr/teste-picpay-go/types"
 	"github.com/go-chi/chi"
 	"golang.org/x/crypto/bcrypt"
 )

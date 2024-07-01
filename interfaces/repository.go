@@ -1,7 +1,7 @@
 package interfaces
 
 import (
-	"github.com/clerijr/teste-picpay-go/types"
+	"github.com/clerijr/teste-picpay-go/entities/types"
 	"github.com/google/uuid"
 )
 

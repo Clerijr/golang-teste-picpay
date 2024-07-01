@@ -3,7 +3,7 @@ package user
 import (
 	"time"
 
-	"github.com/clerijr/teste-picpay-go/types"
+	"github.com/clerijr/teste-picpay-go/entities/types"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )

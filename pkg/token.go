@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/clerijr/teste-picpay-go/types"
+	"github.com/clerijr/teste-picpay-go/entities/types"
 	"github.com/go-chi/jwtauth"
 	"github.com/golang-jwt/jwt"
 )
