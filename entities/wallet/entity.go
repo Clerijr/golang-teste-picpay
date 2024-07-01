@@ -15,3 +15,7 @@ func NewWallet(ownerID uuid.UUID) *Wallet {
 		balance: 0,
 	}
 }
+
+func (w *Wallet) Balance() *int64 {
+	return &w.balance
+}
