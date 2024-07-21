@@ -7,7 +7,8 @@ import (
 
 	"github.com/clerijr/teste-picpay-go/api/routes"
 	"github.com/clerijr/teste-picpay-go/entities/user"
-	"github.com/clerijr/teste-picpay-go/entities/user/repositories"
+	"github.com/clerijr/teste-picpay-go/pkg"
+
 	"github.com/clerijr/teste-picpay-go/infra/db"
 	"github.com/joho/godotenv"
 )
@@ -23,8 +24,9 @@ func main() {
 		log.Print("Error saving user")
 	}
 
-	userRepository := repositories.NewSQLRepo(sqlDb)
-	userController := user.NewController(userRepository)
+	userRepository := user.NewSQLRepo(sqlDb)
+	encoder := pkg.NewAuthEncoder()
+	userController := user.NewController(userRepository, encoder)
 
 	controllers := routes.Controllers{
 		User: userController,

@@ -5,27 +5,28 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/clerijr/teste-picpay-go/entities/types"
-	"github.com/clerijr/teste-picpay-go/interfaces"
-	"github.com/clerijr/teste-picpay-go/pkg"
 	"github.com/go-chi/chi"
 	"golang.org/x/crypto/bcrypt"
 )
 
-type Controller struct {
-	repo    interfaces.Repository
-	encoder *pkg.AuthEncoder
+type UserController struct {
+	repo    UserRepository
+	encoder Encoder
 }
 
-func NewController(repo interfaces.Repository) *Controller {
-	return &Controller{
+type Encoder interface {
+	GenerateToken(user *UserAuth) (*UserAuthToken, error)
+}
+
+func NewController(repo UserRepository, encoder Encoder) *UserController {
+	return &UserController{
 		repo:    repo,
-		encoder: pkg.NewAuthEncoder(),
+		encoder: encoder,
 	}
 }
 
-func (c *Controller) Create(w http.ResponseWriter, r *http.Request) {
-	var user types.NewUser
+func (c *UserController) Create(w http.ResponseWriter, r *http.Request) {
+	var user NewUser
 
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
@@ -44,7 +45,7 @@ func (c *Controller) Create(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 }
 
-func (c *Controller) GetByID(w http.ResponseWriter, r *http.Request) {
+func (c *UserController) GetByID(w http.ResponseWriter, r *http.Request) {
 	userID := chi.URLParam(r, "id")
 
 	user, err := c.repo.FindByID(userID)
@@ -63,9 +64,9 @@ func (c *Controller) GetByID(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func (c *Controller) Login(w http.ResponseWriter, r *http.Request) {
-	var loginData *types.LoginUser
-	var user *types.UserAuth
+func (c *UserController) Login(w http.ResponseWriter, r *http.Request) {
+	var loginData *LoginUser
+	var user *UserAuth
 	var pass *string
 
 	err := json.NewDecoder(r.Body).Decode(&loginData)
@@ -104,7 +105,7 @@ func (c *Controller) Login(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]string{"token": tokenString.AccessToken})
 }
 
-func (c *Controller) Pong(w http.ResponseWriter, r *http.Request) {
+func (c *UserController) Pong(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("pong")
 
 	w.WriteHeader(http.StatusOK)

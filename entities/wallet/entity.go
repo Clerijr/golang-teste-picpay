@@ -8,7 +8,7 @@ type Wallet struct {
 	balance int64
 }
 
-func NewWallet(ownerID uuid.UUID) *Wallet {
+func New(ownerID uuid.UUID) *Wallet {
 	return &Wallet{
 		ID:      uuid.New(),
 		OwnerID: ownerID,

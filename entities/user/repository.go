@@ -1,26 +1,30 @@
-package repositories
+package user
 
 import (
-	"github.com/clerijr/teste-picpay-go/entities/types"
-	"github.com/clerijr/teste-picpay-go/entities/user"
-	"github.com/clerijr/teste-picpay-go/interfaces"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 )
+
+type UserRepository interface {
+	Save(dto *NewUser) error
+	FindByID(id string) (*User, error)
+	FindByEmail(email string) (*UserAuth, error)
+	GetUserPassword(id uuid.UUID) (*string, error)
+}
 
 type SQLRepo struct {
 	db *sqlx.DB
 }
 
-func NewSQLRepo(db *sqlx.DB) interfaces.Repository {
+func NewSQLRepo(db *sqlx.DB) UserRepository {
 	return &SQLRepo{
 		db: db,
 	}
 }
 
-func (r *SQLRepo) Save(dto *types.NewUser) error {
+func (r *SQLRepo) Save(dto *NewUser) error {
 
-	user, _ := user.NewUser(*dto)
+	user, _ := New(*dto)
 
 	_, err := r.db.NamedExec("INSERT INTO users (id, name, lastname, type, document, email, password, created_at) values (:id, :name, :lastname, :type, :document, :email, :password, :created_at)", &user)
 	if err != nil {
@@ -30,8 +34,8 @@ func (r *SQLRepo) Save(dto *types.NewUser) error {
 	return nil
 }
 
-func (r *SQLRepo) FindByID(id string) (*types.User, error) {
-	var user types.User
+func (r *SQLRepo) FindByID(id string) (*User, error) {
+	var user User
 	queryString := "SELECT u.id, u.name, u.lastname, u.type, u.document, u.email, u.created_at, u.updated_at, u.deleted_at, u.token, u.refresh_token FROM users u WHERE u.id=$1"
 
 	err := r.db.Get(&user, queryString, id)
@@ -42,8 +46,8 @@ func (r *SQLRepo) FindByID(id string) (*types.User, error) {
 	return &user, nil
 }
 
-func (r *SQLRepo) FindByEmail(email string) (*types.UserAuth, error) {
-	var user types.UserAuth
+func (r *SQLRepo) FindByEmail(email string) (*UserAuth, error) {
+	var user UserAuth
 	queryString := "SELECT u.id, u.name, u.email FROM users u WHERE u.email=$1"
 
 	err := r.db.Get(&user, queryString, email)

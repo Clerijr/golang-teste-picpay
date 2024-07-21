@@ -1,4 +1,4 @@
-package types
+package user
 
 import (
 	"database/sql"
@@ -7,6 +7,10 @@ import (
 	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
 )
+
+type UserAuthToken struct {
+	AccessToken string `json:"access_token"`
+}
 
 type UserAuth struct {
 	ID    uuid.UUID `db:"id"`

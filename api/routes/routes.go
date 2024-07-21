@@ -8,7 +8,7 @@ import (
 )
 
 type Controllers struct {
-	User *user.Controller
+	User *user.UserController
 }
 
 func InitRoutes(controllers Controllers) *chi.Mux {
