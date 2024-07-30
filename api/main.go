@@ -24,8 +24,9 @@ func main() {
 		log.Print("Error saving user")
 	}
 
-	userRepository := user.NewSQLRepo(sqlDb)
 	encoder := pkg.NewAuthEncoder()
+
+	userRepository := user.NewSQLRepo(sqlDb)
 	userController := user.NewController(userRepository, encoder)
 
 	controllers := routes.Controllers{
